@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationBackEnd.Entidades;
+using WebApplicationBackEnd.Filtros;
+using WebApplicationBackEnd.Services;
 
 namespace WebApplicationBackEnd.Controllers
 {
@@ -11,19 +14,67 @@ namespace WebApplicationBackEnd.Controllers
 
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IService service;
+        private readonly ServiceTransient serviceTransient;
+        private readonly ServiceScoped serviceScoped;
+        private readonly ServiceSingleton serviceSingleton;
+        private readonly ILogger<VideojuegosControllers> logger;
+        private readonly IWebHostEnvironment env;
 
-        public VideojuegosControllers(ApplicationDbContext dbContext)
+        public VideojuegosControllers(ApplicationDbContext context, IService service,
+            ServiceTransient serviceTransient, ServiceScoped serviceScoped,
+            ServiceSingleton serviceSingleton, ILogger<VideojuegosControllers> logger,
+            IWebHostEnvironment env)
         {
-            this.dbContext = dbContext;
+            this.dbContext = context;
+            this.service = service;
+            this.serviceTransient = serviceTransient;
+            this.serviceScoped = serviceScoped;
+            this.serviceSingleton = serviceSingleton;
+            this.logger = logger;
+            this.env = env;
+        }
+
+        [HttpGet("GUID")]
+        [ResponseCache(Duration = 10)]
+        [ServiceFilter(typeof(FiltroDeAccion))]
+        public ActionResult ObtenerGuid()
+        {
+           
+            return Ok(new
+            {
+                AlumnosControllerTransient = serviceTransient.guid,
+                ServiceA_Transient = service.GetTransient(),
+                AlumnosControllerScoped = serviceScoped.guid,
+                ServiceA_Scoped = service.GetScoped(),
+                AlumnosControllerSingleton = serviceSingleton.guid,
+                ServiceA_Singleton = service.GetSingleton()
+            });
         }
 
         [HttpGet]
         [HttpGet("listado")]
         [HttpGet("/lisatado")]
 
+        //[ResponseCache(Duration = 15)]
+        //[Authorize]
+        //[ServiceFilter(typeof(FiltroDeAccion))]
 
         public async Task<ActionResult<List<Videojuego>>> Get()
         {
+            //* Niveles de logs
+            // Critical
+            // Error
+            // Warning
+            // Information
+            // Debug
+            // Trace
+            // *//+
+        
+            logger.LogInformation("Se obtiene el listado de alumnos");
+            logger.LogWarning("Mensaje de prueba warning");
+            service.EjecutarJob();
+
             return await dbContext.Videojuegos.Include(x => x.datos).ToListAsync();
         }
 
@@ -75,8 +126,22 @@ namespace WebApplicationBackEnd.Controllers
 
         public async Task<ActionResult> Post([FromBody]Videojuego videojuego)
         {
+            //Ejemplo para validar desde el controlador con la BD con ayuda del dbContext
+
+            var existeAlumnoMismoNombre = await dbContext.Videojuegos.AnyAsync(x => x.nombre == videojuego.nombre);
+
+            if (existeAlumnoMismoNombre)
+            {
+                return BadRequest("Ya existe un videojuego con este nombre");
+            }
+
+
             dbContext.Add(videojuego);
             await dbContext.SaveChangesAsync();
+
+            //   var ruta = $@"{env.ContentRootPath}\wwwroot\{nuevosRegistros}";
+            //  using (StreamWriter writer = new StreamWriter(ruta, append: true)) { writer.WriteLine(alumno.Id + " " + alumno.Nombre); }
+
             return Ok();
         }
 
