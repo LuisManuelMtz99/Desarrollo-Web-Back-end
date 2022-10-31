@@ -40,7 +40,8 @@ namespace WebApplicationBackEnd.Controllers
         [ServiceFilter(typeof(FiltroDeAccion))]
         public ActionResult ObtenerGuid()
         {
-           
+            throw new NotImplementedException();
+            logger.LogInformation("Durante la ejecucion");
             return Ok(new
             {
                 AlumnosControllerTransient = serviceTransient.guid,
@@ -57,7 +58,7 @@ namespace WebApplicationBackEnd.Controllers
         [HttpGet("/lisatado")]
 
         //[ResponseCache(Duration = 15)]
-        //[Authorize]
+        [Authorize]
         //[ServiceFilter(typeof(FiltroDeAccion))]
 
         public async Task<ActionResult<List<Videojuego>>> Get()
@@ -70,7 +71,7 @@ namespace WebApplicationBackEnd.Controllers
             // Debug
             // Trace
             // *//+
-        
+            throw new NotImplementedException();
             logger.LogInformation("Se obtiene el listado de alumnos");
             logger.LogWarning("Mensaje de prueba warning");
             service.EjecutarJob();

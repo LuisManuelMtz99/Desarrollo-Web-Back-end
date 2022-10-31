@@ -1,11 +1,37 @@
 {
   "Version": 1,
-  "Hash": "ovmaWYEDXTo5eS1YpXIIwT8PpLnTpEBPcB+bozNVuSI=",
+  "Hash": "YLoafrg+OEG6r7XI6y37BGzlH0t7+l7Jf9p0K4ukKWc=",
   "Source": "WebApplicationBackEnd",
   "BasePath": "_content/WebApplicationBackEnd",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "WebApplicationBackEnd\\wwwroot",
+      "Source": "WebApplicationBackEnd",
+      "ContentRoot": "C:\\Users\\Equipo\\source\\repos\\WebApplicationBackEnd\\WebApplicationBackEnd\\wwwroot\\",
+      "BasePath": "_content/WebApplicationBackEnd",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Equipo\\source\\repos\\WebApplicationBackEnd\\WebApplicationBackEnd\\wwwroot\\Grupo036.txt",
+      "SourceId": "WebApplicationBackEnd",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Equipo\\source\\repos\\WebApplicationBackEnd\\WebApplicationBackEnd\\wwwroot\\",
+      "BasePath": "_content/WebApplicationBackEnd",
+      "RelativePath": "Grupo036.txt",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Grupo036.txt"
+    }
+  ]
 }

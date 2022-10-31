@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -21,7 +23,6 @@ namespace WebApplicationBackEnd
         }
 
         public IConfiguration Configuration { get; }
-        public object JwtBearerDefaults { get; private set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -50,41 +51,43 @@ namespace WebApplicationBackEnd
             //services.AddSingleton<IService, ServiceA>();
             services.AddSingleton<ServiceSingleton>();
             services.AddTransient<FiltroDeAccion>();
+            services.AddHostedService<EscribirEnArchivo>();
             services.AddResponseCaching();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIAlumnos", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplicationBakcEnd", Version = "v1" });
             });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             //Use me permite agregar mi propio proceso sin afectar a los demas como Run
-            app.Use(async (context, siguiente) =>
-            {
-                using (var ms = new MemoryStream())
-               {
-                   //Se asigna el body del response en una variable y se le da el valor de memorystream
-                   var bodyOriginal = context.Response.Body;
-                   context.Response.Body = ms;
+            //app.Use(async (context, siguiente) =>
+            //{
+            //    using (var ms = new MemoryStream())
+            //    {
+            //        //Se asigna el body del response en una variable y se le da el valor de memorystream
+            //        var bodyOriginal = context.Response.Body;
+            //        context.Response.Body = ms;
 
-                   //Permite continuar con la linea
-                   await siguiente.Invoke();
+            //        //Permite continuar con la linea
+            //        await siguiente.Invoke();
 
-                    //Guardamos lo que le respondemos al cliente en el string
-                    ms.Seek(0, SeekOrigin.Begin);
-                 string response = new StreamReader(ms).ReadToEnd();
-                   ms.Seek(0, SeekOrigin.Begin);
+            //        //Guardamos lo que le respondemos al cliente en el string
+            //        ms.Seek(0, SeekOrigin.Begin);
+            //        string response = new StreamReader(ms).ReadToEnd();
+            //        ms.Seek(0, SeekOrigin.Begin);
 
-                    //Leemos el stream y lo colocamos como estaba
-                    await ms.CopyToAsync(bodyOriginal);
-                    context.Response.Body = bodyOriginal;
+            //        //Leemos el stream y lo colocamos como estaba
+            //        await ms.CopyToAsync(bodyOriginal);
+            //        context.Response.Body = bodyOriginal;
 
-                    logger.LogInformation(response);
-                }
-            });
+            //        logger.LogInformation(response);
+            //    }
+            //});
 
             //Metodo para utilizar la clase middleware propia
             //app.UseMiddleware<ResponseHttpMiddleware>();
